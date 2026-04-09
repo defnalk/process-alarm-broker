@@ -26,7 +26,7 @@ public class Alarm {
     @Column(name = "metric")
     private String metric;
 
-    @Column(name = "value")
+    @Column(name = "reading_value")
     private Double value;
 
     @Enumerated(EnumType.STRING)

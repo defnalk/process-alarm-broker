@@ -6,3 +6,5 @@ build/
 .vscode/
 .DS_Store
 out/
+.gradle/
+build/

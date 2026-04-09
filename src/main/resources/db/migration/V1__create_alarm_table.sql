@@ -3,7 +3,7 @@ CREATE TABLE alarms (
     sensor_id             VARCHAR(128) NOT NULL,
     plant_section         VARCHAR(64),
     metric                VARCHAR(64),
-    value                 DOUBLE PRECISION,
+    reading_value         DOUBLE PRECISION,
     severity              VARCHAR(16) NOT NULL,
     message               VARCHAR(512),
     raw_timestamp         TIMESTAMP WITH TIME ZONE NOT NULL,
