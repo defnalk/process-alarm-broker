@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/alarms")
 public class AlarmQueryController {
 
+    private static final int MAX_PAGE_SIZE = 500;
+
     private final AlarmQueryService service;
 
     public AlarmQueryController(AlarmQueryService service) {
@@ -31,6 +33,9 @@ public class AlarmQueryController {
             @RequestParam(required = false, defaultValue = "false") boolean suppressed,
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "50") int size) {
+        if (page < 0) page = 0;
+        if (size < 1) size = 1;
+        if (size > MAX_PAGE_SIZE) size = MAX_PAGE_SIZE;
         return service.search(from, to, severity, section, suppressed, page, size)
                 .map(AlarmResponse::from)
                 .getContent();
