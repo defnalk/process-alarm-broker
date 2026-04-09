@@ -1,7 +1,6 @@
 package com.defneertugrul.alarmer.classification;
 
 import com.defneertugrul.alarmer.domain.AlarmSeverity;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -18,7 +17,11 @@ public class RuleBasedClassifier implements SeverityClassifier {
                 .map(r -> new CompiledRule(
                         Pattern.compile(r.getSensorPattern()),
                         r.getMetric(),
-                        r.getThresholds()))
+                        // Sort thresholds descending so classify() can short-circuit
+                        // on the first match instead of streaming every entry.
+                        r.getThresholds().entrySet().stream()
+                                .sorted(Map.Entry.<AlarmSeverity, Double>comparingByValue().reversed())
+                                .toList()))
                 .toList();
     }
 
@@ -27,17 +30,16 @@ public class RuleBasedClassifier implements SeverityClassifier {
         for (CompiledRule rule : compiled) {
             if (!rule.metric.equals(metric)) continue;
             if (!rule.pattern.matcher(sensorId).matches()) continue;
-            return highestExceeded(rule.thresholds, value);
+            for (Map.Entry<AlarmSeverity, Double> e : rule.sortedThresholds) {
+                if (value >= e.getValue()) {
+                    return Optional.of(e.getKey());
+                }
+            }
+            return Optional.empty();
         }
         return Optional.empty();
     }
 
-    private static Optional<AlarmSeverity> highestExceeded(Map<AlarmSeverity, Double> thresholds, double value) {
-        return thresholds.entrySet().stream()
-                .filter(e -> value >= e.getValue())
-                .max(Comparator.comparingDouble(Map.Entry::getValue))
-                .map(Map.Entry::getKey);
-    }
-
-    private record CompiledRule(Pattern pattern, String metric, Map<AlarmSeverity, Double> thresholds) {}
+    private record CompiledRule(Pattern pattern, String metric,
+                                List<Map.Entry<AlarmSeverity, Double>> sortedThresholds) {}
 }
