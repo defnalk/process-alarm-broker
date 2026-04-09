@@ -1,0 +1,26 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: alarmbroker
+      POSTGRES_USER: alarmbroker
+      POSTGRES_PASSWORD: alarmbroker
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U alarmbroker -d alarmbroker"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  app:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/alarmbroker
+      DB_USER: alarmbroker
+      DB_PASSWORD: alarmbroker
+    ports:
+      - "8080:8080"

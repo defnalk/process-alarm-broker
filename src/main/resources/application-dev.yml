@@ -1,0 +1,4 @@
+logging:
+  level:
+    com.defneertugrul.alarmer: DEBUG
+    org.springframework.web: INFO

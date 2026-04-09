@@ -1,0 +1,48 @@
+spring:
+  application:
+    name: process-alarm-broker
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/alarmbroker}
+    username: ${DB_USER:alarmbroker}
+    password: ${DB_PASSWORD:alarmbroker}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+
+server:
+  port: 8080
+
+alarm:
+  classification:
+    rules:
+      - sensor-pattern: ".*temperature.*"
+        metric: "temperature_C"
+        thresholds:
+          LOW: 80
+          MEDIUM: 100
+          HIGH: 120
+          CRITICAL: 140
+      - sensor-pattern: ".*pressure.*"
+        metric: "pressure_kPa"
+        thresholds:
+          LOW: 200
+          MEDIUM: 350
+          HIGH: 500
+          CRITICAL: 600
+      - sensor-pattern: ".*co2_loading.*"
+        metric: "co2_loading"
+        thresholds:
+          LOW: 0.3
+          MEDIUM: 0.4
+          HIGH: 0.45
+          CRITICAL: 0.5
+  suppression:
+    window-seconds: 30
+    max-group-size: 10

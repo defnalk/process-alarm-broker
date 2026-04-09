@@ -1,0 +1,11 @@
+sensor_id,plant_section,metric,value,timestamp
+ABS-temperature-001,ABSORBER,temperature_C,135.2,2025-07-15T14:30:00Z
+ABS-temperature-001,ABSORBER,temperature_C,136.0,2025-07-15T14:30:05Z
+ABS-temperature-001,ABSORBER,temperature_C,142.0,2025-07-15T14:30:10Z
+STR-pressure-003,STRIPPER,pressure_kPa,520.0,2025-07-15T14:30:15Z
+STR-pressure-003,STRIPPER,pressure_kPa,610.0,2025-07-15T14:30:20Z
+ABS-temperature-002,ABSORBER,temperature_C,72.0,2025-07-15T14:30:25Z
+REB-co2_loading-001,REBOILER,co2_loading,0.46,2025-07-15T14:30:30Z
+REB-co2_loading-001,REBOILER,co2_loading,0.51,2025-07-15T14:30:40Z
+ABS-temperature-001,ABSORBER,temperature_C,90.0,2025-07-15T14:31:00Z
+STR-pressure-003,STRIPPER,pressure_kPa,210.0,2025-07-15T14:31:10Z
