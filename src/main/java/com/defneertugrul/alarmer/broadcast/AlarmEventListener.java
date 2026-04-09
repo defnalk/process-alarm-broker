@@ -3,9 +3,10 @@ package com.defneertugrul.alarmer.broadcast;
 import com.defneertugrul.alarmer.api.AlarmResponse;
 import com.defneertugrul.alarmer.domain.AlarmEvent;
 import com.defneertugrul.alarmer.persistence.AlarmRepository;
-import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 /**
  * Pushes accepted (non-suppressed) alarms to /topic/alarms.
@@ -22,7 +23,7 @@ public class AlarmEventListener {
         this.repo = repo;
     }
 
-    @EventListener
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onEvent(AlarmEvent event) {
         if (event instanceof AlarmEvent.AlarmAccepted accepted) {
             repo.findById(accepted.alarmId())
