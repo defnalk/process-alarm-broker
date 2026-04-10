@@ -1,6 +1,6 @@
 # process-alarm-broker
 
-Event-driven microservice that ingests industrial process alarms (CSV upload or REST push), classifies them by severity, deduplicates alarm floods, persists to PostgreSQL, and broadcasts non-suppressed alarms over WebSocket.
+Event driven microservice that ingests industrial process alarms (CSV upload or REST push), classifies them by severity, deduplicates alarm floods, persists to PostgreSQL, and broadcasts non suppressed alarms over WebSocket.
 
 ![ci](https://github.com/defnalk/process-alarm-broker/actions/workflows/ci.yml/badge.svg)
 
@@ -20,7 +20,7 @@ The pipeline is wired with `ApplicationEventPublisher` so the WebSocket layer is
 
 ## Quick start
 
-One-time: generate the Gradle wrapper (requires Gradle 8+ on PATH).
+One time: generate the Gradle wrapper (requires Gradle 8+ on PATH).
 
 ```bash
 gradle wrapper --gradle-version 8.10
@@ -55,16 +55,16 @@ curl http://localhost:8080/api/alarms/stats
 
 ## Design decisions
 
-- **Event-driven over direct calls** — keeps the broadcast layer decoupled and makes Kafka/SQS swap-in mechanical.
-- **Suppression matters** — industrial alarms cluster in floods (one upset condition trips dozens of correlated sensors). Without dedup, downstream UIs are unusable. The current implementation is in-memory; production should back this with Redis SETEX so multiple instances share state.
-- **Flyway over `ddl-auto`** — migrations are reviewable, versioned, and CI-runnable. Auto-DDL is fine for prototypes and a footgun for production.
-- **Records + sealed interfaces** — `AlarmEvent` uses Java 21 sealed types so the WebSocket listener can pattern-match exhaustively.
-- **Testcontainers** — repository tests run against real Postgres, not H2.
+- **Event driven over direct calls**, keeps the broadcast layer decoupled and makes Kafka/SQS swap in mechanical.
+- **Suppression matters**, industrial alarms cluster in floods (one upset condition trips dozens of correlated sensors). Without dedup, downstream UIs are unusable. The current implementation is in memory; production should back this with Redis SETEX so multiple instances share state.
+- **Flyway over `ddl-auto`**, migrations are reviewable, versioned, and CI runnable. Auto DDL is fine for prototypes and a footgun for production.
+- **Records + sealed interfaces**, `AlarmEvent` uses Java 21 sealed types so the WebSocket listener can pattern match exhaustively.
+- **Testcontainers**, repository tests run against real Postgres, not H2.
 
 ## What I'd add in production
 
 - Kafka or SQS as the event transport (durable, replayable)
-- Redis-backed suppression state (cluster-wide)
+- Redis backed suppression state (cluster wide)
 - Prometheus metrics + Grafana dashboards (alarm rate, suppression ratio, ingest latency)
 - OpenAPI spec via springdoc
 - Auth (mTLS or OAuth2) on ingest endpoints
