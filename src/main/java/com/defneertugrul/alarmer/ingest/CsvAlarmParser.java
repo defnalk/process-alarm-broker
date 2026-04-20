@@ -28,12 +28,21 @@ public class CsvAlarmParser {
              CSVParser parser = CSVParser.parse(reader, FORMAT)) {
             List<AlarmDTO> result = new ArrayList<>();
             for (CSVRecord record : parser) {
-                result.add(new AlarmDTO(
-                        record.get("sensor_id"),
-                        record.get("plant_section"),
-                        record.get("metric"),
-                        Double.parseDouble(record.get("value")),
-                        Instant.parse(record.get("timestamp"))));
+                try {
+                    result.add(new AlarmDTO(
+                            record.get("sensor_id"),
+                            record.get("plant_section"),
+                            record.get("metric"),
+                            Double.parseDouble(record.get("value")),
+                            Instant.parse(record.get("timestamp"))));
+                } catch (IllegalArgumentException | java.time.format.DateTimeParseException ex) {
+                    // Commons-CSV's NumberFormatException / header-missing
+                    // IllegalArgumentException and Instant's parse failures all
+                    // bubble up without row context. Rewrap so the caller can
+                    // tell the operator which CSV line was bad.
+                    throw new IllegalArgumentException(
+                            "Invalid CSV row at line " + record.getRecordNumber() + ": " + ex.getMessage(), ex);
+                }
             }
             return result;
         }
